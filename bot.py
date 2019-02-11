@@ -66,7 +66,7 @@ def create_threads():
 def handler_new_members(message):
     date_kick=time.time() + TIME_KICK
     user_name = message.new_chat_member.first_name
-    keyboard_capcha = types.InlineKeyboardMarkup()
+    keyboard_capcha = types.InlineKeyboardMarkup(row_width=1)
     keyboard_capcha.add(*[types.InlineKeyboardButton(text=keyname, callback_data=keyname) for keyname in LIST_KEY])
     msg=bot.reply_to(message, CAPCHA_MESSAGE.format(user_name),reply_markup=keyboard_capcha)
     DATA_KICK[date_kick]={'chatid':message.chat.id,'userid':message.new_chat_member.id,'messageid_to':msg.message_id,'messageid':message.message_id}
