@@ -80,29 +80,32 @@ def handler_new_members(message):
 #Обработка нажатия кнопок
 @bot.callback_query_handler(func=lambda c: True)
 def callback(c):
-    user_name = c.message.reply_to_message.new_chat_member.first_name
-    if c.data==DATA_CAPCHA['OK']:
-        if c.from_user.id == c.message.reply_to_message.new_chat_member.id:
-            for d in DATA_KICK.copy():
-                if DATA_KICK[d]['userid']==c.from_user.id and DATA_KICK[d]['chatid']==c.message.chat.id:
-                    DATA_KICK.pop(d)
-            bot.delete_message(c.message.chat.id, c.message.message_id)
-            bot.send_message(c.message.chat.id,CAPCHA_OK.format(user_name))
-            #Убирает бесконечный бан
-            bot.restrict_chat_member(c.message.chat.id, c.from_user.id, 
-            can_send_messages=True, 
-            can_send_media_messages=True, 
-            can_send_other_messages=True,
-            can_add_web_page_previews=True)            
-    else:
-        if c.from_user.id == c.message.reply_to_message.new_chat_member.id:
-            bot.delete_message(c.message.chat.id, c.message.reply_to_message.message_id)
-            bot.delete_message(c.message.chat.id, c.message.message_id)
-            bot.kick_chat_member(c.message.chat.id, c.from_user.id, until_date=time.time() + 60 )
-            for d in DATA_KICK.copy():
-                if DATA_KICK[d]['userid']==c.from_user.id and DATA_KICK[d]['chatid']==c.message.chat.id:
-                    DATA_KICK.pop(d)
-
+    try:
+        user_name = c.message.reply_to_message.new_chat_member.first_name
+        if c.data==DATA_CAPCHA['OK']:
+            if c.from_user.id == c.message.reply_to_message.new_chat_member.id:
+                for d in DATA_KICK.copy():
+                    if DATA_KICK[d]['userid']==c.from_user.id and DATA_KICK[d]['chatid']==c.message.chat.id:
+                        DATA_KICK.pop(d)
+                bot.delete_message(c.message.chat.id, c.message.message_id)
+                bot.send_message(c.message.chat.id,CAPCHA_OK.format(user_name))
+                #Убирает бесконечный бан
+                bot.restrict_chat_member(c.message.chat.id, c.from_user.id, 
+                can_send_messages=True, 
+                can_send_media_messages=True, 
+                can_send_other_messages=True,
+                can_add_web_page_previews=True)            
+        else:
+            if c.from_user.id == c.message.reply_to_message.new_chat_member.id:
+                bot.delete_message(c.message.chat.id, c.message.reply_to_message.message_id)
+                bot.delete_message(c.message.chat.id, c.message.message_id)
+                bot.kick_chat_member(c.message.chat.id, c.from_user.id, until_date=time.time() + 60 )
+                for d in DATA_KICK.copy():
+                    if DATA_KICK[d]['userid']==c.from_user.id and DATA_KICK[d]['chatid']==c.message.chat.id:
+                        DATA_KICK.pop(d)
+    except:
+        print('Неудалось обработать callback')
+        
 #На сообщение которое равно тексту 'ping' формирование ответа. Этакая проверка что бот работает
 @bot.message_handler(content_types=["text"])
 def ping(m):
