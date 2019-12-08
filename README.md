@@ -12,4 +12,6 @@ pip install pyTelegramBotAPI
 
 2.Запустите python3 bot.py
 
-Вы можете использовать бота [@ModeratorAntiBot](https://tele.click/ModeratorAntiBot), бот будет работать в тестовом режиме, вы можете помочь в оплате хостинга задонатив btc: **35uX9RKJvBHKvEXUWomR2FbbgfcvMAX7rr**
+Вы можете использовать бота [@ModeratorAntiBot](https://tele.click/ModeratorAntiBot), бот будет работать в тестовом режиме, вы можете помочь задонатив:
+
+**ЯД: [410014041457456](https://ivanprotchenko.github.io/)**
