@@ -65,13 +65,13 @@ def create_threads():
 @bot.message_handler(content_types=["new_chat_members"])
 def handler_new_members(message):
     date_kick=time.time() + TIME_KICK
-    user_name = message.new_chat_member.first_name
+    user_name = message.json['new_chat_member']['first_name']
     keyboard_capcha = types.InlineKeyboardMarkup(row_width=1)
     keyboard_capcha.add(*[types.InlineKeyboardButton(text=keyname, callback_data=keyname) for keyname in LIST_KEY])
     msg=bot.reply_to(message, CAPCHA_MESSAGE.format(user_name),reply_markup=keyboard_capcha)
-    DATA_KICK[date_kick]={'chatid':message.chat.id,'userid':message.new_chat_member.id,'messageid_to':msg.message_id,'messageid':message.message_id}
+    DATA_KICK[date_kick]={'chatid':message.chat.id,'userid':message.json['new_chat_member']['id'],'messageid_to':msg.message_id,'messageid':message.message_id}
     #Выдача всем новым пользователям бесконечного бана
-    bot.restrict_chat_member(message.chat.id, message.new_chat_member.id, 
+    bot.restrict_chat_member(message.chat.id, message.json['new_chat_member']['id'],
         until_date=0,
         )
     #Разворот списка и названиями кнопок
@@ -81,22 +81,22 @@ def handler_new_members(message):
 @bot.callback_query_handler(func=lambda c: True)
 def callback(c):
     try:
-        user_name = c.message.reply_to_message.new_chat_member.first_name
+        user_name = c.message.reply_to_message.json['new_chat_member']['first_name']
         if c.data==DATA_CAPCHA['OK']:
-            if c.from_user.id == c.message.reply_to_message.new_chat_member.id:
+            if c.from_user.id == c.message.reply_to_message.json['new_chat_member']['id']:
                 for d in DATA_KICK.copy():
                     if DATA_KICK[d]['userid']==c.from_user.id and DATA_KICK[d]['chatid']==c.message.chat.id:
                         DATA_KICK.pop(d)
                 bot.delete_message(c.message.chat.id, c.message.message_id)
                 bot.send_message(c.message.chat.id,CAPCHA_OK.format(user_name))
                 #Убирает бесконечный бан
-                bot.restrict_chat_member(c.message.chat.id, c.from_user.id, 
-                can_send_messages=True, 
-                can_send_media_messages=True, 
+                bot.restrict_chat_member(c.message.chat.id, c.from_user.id,
+                can_send_messages=True,
+                can_send_media_messages=True,
                 can_send_other_messages=True,
-                can_add_web_page_previews=True)            
+                can_add_web_page_previews=True)
         else:
-            if c.from_user.id == c.message.reply_to_message.new_chat_member.id:
+            if c.from_user.id == c.message.reply_to_message.json['new_chat_member']['id']:
                 bot.delete_message(c.message.chat.id, c.message.reply_to_message.message_id)
                 bot.delete_message(c.message.chat.id, c.message.message_id)
                 bot.kick_chat_member(c.message.chat.id, c.from_user.id, until_date=time.time() + 60 )
